@@ -95,10 +95,7 @@ class ilist(object):
     def __add__(self, other):
         # append
         if not isinstance(other, ilist):
-            if not self: # self is nil
-                return other + self
-            else:
-                return self.head + (self.tail + other)
+            return self.head + (self.tail + other)
         # concatenate
         else:
             if not self.tail: # tail is nil
@@ -121,3 +118,7 @@ class nil(ilist):
     @property
     def head(self):
         raise ValueError("head of nil")
+
+    def __add__(self, other):
+        if not isinstance(other, ilist):
+            return other + self
