@@ -17,39 +17,76 @@ class ilist(object):
         return self._tail
 
     def map(self, function):
+#     """\
+# Maps the given function to the entire ilist. Essentially, map applies the
+# given function to the list head, and then call map(function) in the ilist
+# tail returning, then, a new ilist."""
         return function(self.head) + self.tail.map(function)
 
     def filter(self, predicate):
+#     """\
+# Filters the list with the given predicate. Needless to say, filter creates
+# a new ilist with only the elements for which the predicate evaluates to \
+# True."""
         if predicate(self.head):
+            # if the predicate for head evals to True, then head should be
+            # included in the new list.
             return self.head + self.tail.filter(predicate)
-        else:
+        else: # otherwise, skip it.
             return self.tail.filter(predicate)
 
     def take(self, howmany):
+        """\
+take works just like slicing in core python lists: A.take(3) <=> B[:3]
+where   B = [1,2,3,4,5]
+        A = 1:2:3:4:5:nil"""
         if howmany == 0:
             return nil()
         else:
             return self.head + self.tail.take(howmany-1)
 
     def take_while(self, predicate):
+        """\
+take_while works similarly to filter, except that take_while will stop
+when the predicate applied to the current element evaluates to False. So,
+A.take_while(odd) returns B where
+    odd = (x) => x % 2 != 0
+    A   = 1:3:5:6:7:9:nil
+    B   = 1:3:5:nil"""
         if not predicate(self.head):
             return nil()
         else:
             return self.head + self.tail.take_while(predicate)
 
     def drop(self, howmany):
+        """\
+Drop, like take, take, works like slicing in core Python lists.
+A.drop(2) <=> B[2:] where
+    A = 1:2:3:nil
+    B = [1,2,3]"""
         if howmany == 0:
             return self
         else:
             return self.tail.drop(howmany-1)
 
     def drop_while(self, predicate):
+        """\
+drop_while will drop elements while the predicate evaluates to True.
+A.drop_while(even) returns B where
+    even = (x) => x % 2 == 0
+    A    = 2:4:6:1:3:5:nil
+    B    = 2:4:6:nil"""
         if not predicate(self.head):
             return self
         else:
             return self.tail.drop_while(predicate)
 
     def reduce(self, function, acc=None):
+        """\
+Reduce takes a binary function and applies to the whole list,
+reducing it to a single value. E.g., A.reduce(add) = 10 where
+    add = (a,b) => a + b
+    A   = 1:2:3:4:nil"""
         if acc is None:
             return self.tail.reduce(function, self.head)
         else:
@@ -57,6 +94,7 @@ class ilist(object):
 
     @property
     def to_list(self):
+        """Returns the current ilist object as a core Python list."""
         if self:
             return [self.head] + self.tail.to_list
         else:
@@ -64,6 +102,7 @@ class ilist(object):
 
     @staticmethod
     def from_list(a_list):
+        """Returns an ilist from a core Python list."""
         if not a_list:
             return nil()
         else:
@@ -119,16 +158,16 @@ class nil(ilist):
 
     def take(self, howmany):
         return self
-    
+
     def take_while(self, predicate):
         return self
-    
+
     def drop(self, howmany):
         return self
-    
+
     def drop_while(self, predicate):
         return self
-    
+
     def reduce(self, function, acc):
         return acc
 
