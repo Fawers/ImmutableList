@@ -17,17 +17,17 @@ class ilist(object):
         return self._tail
 
     def map(self, function):
-#     """\
-# Maps the given function to the entire ilist. Essentially, map applies the
-# given function to the list head, and then call map(function) in the ilist
-# tail returning, then, a new ilist."""
+        """\
+Maps the given function to the entire ilist. Essentially, map applies the
+given function to the list head, and then call map(function) in the ilist
+tail returning, then, a new ilist."""
         return function(self.head) + self.tail.map(function)
 
     def filter(self, predicate):
-#     """\
-# Filters the list with the given predicate. Needless to say, filter creates
-# a new ilist with only the elements for which the predicate evaluates to \
-# True."""
+        """\
+Filters the list with the given predicate. Needless to say, filter creates
+a new ilist with only the elements for which the predicate evaluates to \
+True."""
         if predicate(self.head):
             # if the predicate for head evals to True, then head should be
             # included in the new list.
