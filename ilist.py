@@ -55,6 +55,10 @@ class ilist(object):
         else:
             return self.tail.reduce(function, function(self.head, acc))
 
+    def for_each(self, function):
+        function(self.head)
+        self.tail.for_each(function)
+
     @property
     def to_list(self):
         if self:
@@ -70,7 +74,10 @@ class ilist(object):
             return a_list[0] + ilist.from_list(a_list[1:])
 
     def __repr__(self):
-        return repr(self._head)+':'+repr(self._tail)
+        return 'ilist<%s,...>' % self.head
+
+    def __str__(self):
+        return str(self._head)+':'+str(self._tail)
 
     def __nonzero__(self):
         return True
@@ -89,11 +96,22 @@ class ilist(object):
             index += l
         return self.drop(index).head
 
+    def __contains__(self, item):
+        if self.head == item:
+            return True
+        else:
+            return item in self.tail
+
+    def __iter__(self):
+        for item in self.to_list:
+            yield item
+
     @property
     def length(self):
         return len(self)
     def __len__(self):
         return 1 + len(self.tail)
+
 
 class nil(ilist):
     __metaclass__ = singleton
@@ -102,6 +120,8 @@ class nil(ilist):
         ilist.__init__(self, None)
 
     def __repr__(self):
+        return 'nil'
+    def __str__(self):
         return 'nil'
 
     def __nonzero__(self):
@@ -132,6 +152,9 @@ class nil(ilist):
     def reduce(self, function, acc):
         return acc
 
+    def for_each(self, function):
+        return
+
     def __add__(self, other):
         if not isinstance(other, ilist):
             return ilist(other)
@@ -146,5 +169,8 @@ class nil(ilist):
 
     def __len__(self):
         return 0
+
+    def __contains__(self, item):
+        return False
 
 a = ilist.from_list(range(10))
