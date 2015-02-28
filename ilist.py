@@ -60,7 +60,7 @@ A.take_while(odd) returns B where
 
     def drop(self, howmany):
         """\
-Drop, like take, take, works like slicing in core Python lists.
+drop, like take, works like slicing in core Python lists.
 A.drop(2) <=> B[2:] where
     A = 1:2:3:nil
     B = [1,2,3]"""
@@ -75,7 +75,7 @@ drop_while will drop elements while the predicate evaluates to True.
 A.drop_while(even) returns B where
     even = (x) => x % 2 == 0
     A    = 2:4:6:1:3:5:nil
-    B    = 2:4:6:nil"""
+    B    = 1:3:5:nil"""
         if not predicate(self.head):
             return self
         else:
@@ -104,25 +104,36 @@ reducing it to a single value. E.g., A.reduce(add) = 10 where
         else:
             return []
 
-    @staticmethod
-    def from_list(a_list):
+    @classmethod
+    def from_list(cls, a_list):
         """Returns an ilist from a core Python list."""
         if not a_list:
             return nil()
         else:
-            return a_list[0] + ilist.from_list(a_list[1:])
+            return a_list[0] + cls.from_list(a_list[1:])
 
     def __repr__(self):
         return 'ilist<%s,...>' % self.head
 
     def __str__(self):
-        return str(self._head)+':'+str(self._tail)
+        return str(self.head)+':'+str(self.tail)
 
     def __nonzero__(self):
         return True
 
-    # prepend
+    # prepend -- deprecated; use __rpow__
     def __radd__(self, other):
+        return other ** self
+
+    # prepend
+    # Use this method to prepend elements or to build new ilists from
+    # scratch
+    # Example:
+    # 1 ** 2 ** 3 ** nil() => 1:2:3:nil
+    # This is possible because the ** operator is right associative,
+    # which means that 1**2**3**nil() <=> 1**(2**(3**nil()))
+    # (It's also why I chose __rpow__ to be the prepend method)
+    def __rpow__(self, other):
         return ilist(other, self)
 
     # append & concatenate
@@ -153,6 +164,9 @@ reducing it to a single value. E.g., A.reduce(add) = 10 where
 
 
 class nil(ilist):
+    # makes it a singleton
+    # more info on singleton:
+    # http://en.wikipedia.org/wiki/Singleton_pattern
     __metaclass__ = singleton
 
     def __init__(self):
@@ -213,3 +227,6 @@ class nil(ilist):
         return False
 
 a = ilist.from_list(range(10))
+
+# Building a list from scratch using __rpow__:
+b = 2 ** 4 ** 6 ** 1 ** 3 ** 5 ** nil()
